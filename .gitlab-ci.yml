@@ -7,6 +7,8 @@ include:
   - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-build.yml
 
 stages:
+  - build
+  - test
   - publish
 
 publish_branch:
