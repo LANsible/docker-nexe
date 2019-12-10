@@ -1,0 +1,22 @@
+---
+services:
+  - docker:19.03-dind
+
+include:
+  - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-login.yml
+  - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-build.yml
+
+stages:
+  - publish
+
+publish_branch:
+  variables:
+    DOCKER_IMAGE_NAME: lansible/nexe-cache
+
+publish_tag:
+  variables:
+    DOCKER_IMAGE_NAME: lansible/nexe-cache
+
+publish_latest:
+  variables:
+    DOCKER_IMAGE_NAME: lansible/nexe-cache
