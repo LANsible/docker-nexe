@@ -4,9 +4,11 @@ services:
 
 include:
   - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-login.yml
-  - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-publish.yml
+  - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-build.yml
 
 stages:
+  - build
+  - test
   - publish
 
 publish_branch:
