@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:experimental
-
 FROM alpine:3.10
 
 # See https://github.com/nodejs/node/blob/master/BUILDING.md#building-nodejs-on-supported-platforms
@@ -18,10 +16,11 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
 
 RUN echo "console.log('hello world')" >> index.js
 
+# Copy latest cache into this container to speedup building
+COPY --from=lansible/nexe-cache:latest /root/.nexe/ /root/.nexe/
+
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
 # https://github.com/nexe/nexe/issues/610#issuecomment-483336855
-RUN --mount=type=cache,from=lansible/nexe-cache:latest,source=/root/.nexe/,target=/root/.nexe/ \
-  nexe --build --empty --no-mangle --verbose --configure="--fully-static"
-
+RUN nexe --build --empty --no-mangle --verbose --configure="--fully-static"
 RUN upx --brute /root/.nexe/*/out/Release/node
