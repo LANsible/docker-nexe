@@ -1,5 +1,7 @@
 FROM alpine:3.10
 
+ENV VERSION=4.0.0-beta.3
+
 # See https://github.com/nodejs/node/blob/master/BUILDING.md#building-nodejs-on-supported-platforms
 RUN apk --no-cache add \
   g++ \
@@ -9,13 +11,13 @@ RUN apk --no-cache add \
   npm \
   upx
 
-# Copy latest cache into this image to speedup build
-COPY --from=lansible/nexe-cache:latest /root/.nexe /root/.nexe
+# # Copy latest cache into this image to speedup build
+# COPY --from=lansible/nexe-cache:latest /root/.nexe /root/.nexe
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  npm install --unsafe-perm --global nexe@4.0.0-beta.3
+  npm install --unsafe-perm --global nexe@${VERSION}
 
 RUN echo "console.log('hello world')" >> index.js
 
@@ -28,8 +30,10 @@ RUN nexe --build --empty --no-mangle --verbose --configure="--fully-static"
 # grep on stderr and stdout, therefore the redirect
 # no upx: 43.1M
 # --best: 14.8M
-# --brute: 11.2M
-# --ultra-brute: 11.1M
+# brute or ultra-brute stops it from working
 RUN if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
       upx --ultra-brute /root/.nexe/*/out/Release/node; \
     fi
+
+# Test node binary
+RUN upx -t /root/.nexe/*/out/Release/node
