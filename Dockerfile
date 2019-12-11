@@ -12,7 +12,7 @@ RUN apk --no-cache add \
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  npm install --unsafe-perm --global nexe
+  npm install --unsafe-perm --global nexe@4.0.0-beta.3
 
 RUN echo "console.log('hello world')" >> index.js
 
