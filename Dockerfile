@@ -16,9 +16,6 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
 
 RUN echo "console.log('hello world')" >> index.js
 
-# Copy latest cache into this container to speedup building
-COPY --from=lansible/nexe-cache:latest /root/.nexe/ /root/.nexe/
-
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
 # https://github.com/nexe/nexe/issues/610#issuecomment-483336855
