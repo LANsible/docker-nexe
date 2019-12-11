@@ -11,8 +11,8 @@ RUN apk --no-cache add \
   npm \
   upx
 
-# # Copy latest cache into this image to speedup build
-# COPY --from=lansible/nexe-cache:latest /root/.nexe /root/.nexe
+# Copy latest cache into this image to speedup build
+COPY --from=lansible/nexe-cache:latest /root/.nexe /root/.nexe
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
