@@ -1,4 +1,4 @@
-# docker-nexe-cache
+# docker-nexe
 
 Compile Node just once instead of each build. Use it like:
 

@@ -19,6 +19,7 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
   npm install --unsafe-perm --global nexe@${VERSION}
 
+# Create dummy app
 RUN echo "console.log('hello world')" >> index.js
 
 # NOTE(wilmaro): remove downloaded node when binary not valid (compiled on wrong arch)
@@ -28,18 +29,20 @@ RUN /root/.nexe/*/node --version || rm -rf /root/.nexe/*
 # https://github.com/nexe/nexe/issues/366
 # https://github.com/nexe/nexe/issues/610#issuecomment-483336855
 # --configure is passed to node configure
-# --fully-static: build static node binary
+# --fully-static: build static node binary (will not work for serialport)
 # --partly-static: keep support for dynamic linking
 # https://github.com/nodejs/node/blob/master/configure.py#L131
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  nexe --target alpine --build --empty --no-mangle --verbose --configure="--partly-static"
+  nexe --target alpine --build --empty --no-mangle --verbose --configure="--partly-static" --output test && \
+  rm -f test
 
 # Only run upx when not yet packaged
 # grep on stderr and stdout, therefore the redirect
 # no upx: 43.1M
 # --best: 14.8M
 # brute or ultra-brute stops it from working
+# upx -t to test binary
 RUN \
   if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
     upx --best /root/.nexe/*/out/Release/node; \
