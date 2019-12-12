@@ -33,7 +33,7 @@ RUN /root/.nexe/*/node --version || rm -rf /root/.nexe/*
 # https://github.com/nodejs/node/blob/master/configure.py#L131
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  nexe --build --empty --no-mangle --verbose --configure="--partly-static"
+  nexe --target alpine --build --empty --no-mangle --verbose --configure="--partly-static"
 
 # Only run upx when not yet packaged
 # grep on stderr and stdout, therefore the redirect
