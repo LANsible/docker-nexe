@@ -8,7 +8,7 @@ RUN apk --no-cache add \
   busybox-static \
   g++ \
   make \
-  python \
+  python3 \
   linux-headers \
   npm \
   upx
@@ -23,9 +23,6 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
 
 # Create dummy app
 RUN echo "console.log('hello world')" >> index.js
-
-# NOTE(wilmaro): remove downloaded node when binary not valid (compiled on wrong arch)
-RUN /root/.nexe/*/node --version || rm -rf /root/.nexe/*
 
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
