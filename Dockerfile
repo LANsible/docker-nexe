@@ -1,15 +1,18 @@
-FROM alpine:3.10
+FROM alpine:edge
 
 ENV VERSION=4.0.0-beta.3
+# Needed for node-gyp otherwise looking for Python2
+ENV PYTHON=/usr/bin/python3
 
 # Added busybox-static for easy usage in scratch images
 # See https://github.com/nodejs/node/blob/master/BUILDING.md#building-nodejs-on-supported-platforms
 RUN apk --no-cache add \
+  git \
   busybox-static \
-  g++ \
-  make \
+  build-base \
   python3 \
   linux-headers \
+  nodejs \
   npm \
   upx
 
@@ -22,7 +25,7 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   npm install --unsafe-perm --global nexe@${VERSION}
 
 # Create dummy app
-RUN echo "console.log('hello world')" >> index.js
+RUN echo "console.log('hello world')" > index.js
 
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
