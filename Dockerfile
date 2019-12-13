@@ -36,6 +36,12 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   nexe --target alpine --build --empty --no-mangle --verbose --configure="--partly-static" --output test && \
   rm -f test
 
+# Remove all files except the ones needed for nexe build
+RUN find /root/.nexe/* -type f \
+    -not -name 'node' \
+    -not -name '_third_party_main.js' \
+    -not -name 'configure.py' -delete
+
 # Only run upx when not yet packaged
 # grep on stderr and stdout, therefore the redirect
 # no upx: 43.1M
