@@ -2,8 +2,10 @@ FROM alpine:3.10
 
 ENV VERSION=4.0.0-beta.3
 
+# Added busybox-static for easy usage in scratch images
 # See https://github.com/nodejs/node/blob/master/BUILDING.md#building-nodejs-on-supported-platforms
 RUN apk --no-cache add \
+  busybox-static \
   g++ \
   make \
   python \
