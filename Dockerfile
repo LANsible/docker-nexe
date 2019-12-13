@@ -39,8 +39,18 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   nexe --target alpine --build --empty --no-mangle --verbose --configure="--partly-static" --output test && \
   rm -f test
 
+# Get node version to package only the current installed version (copy earlier might have been an old version)
+# Remove any other version then the current node version
 # Remove all files except the ones needed for nexe build
-RUN find /root/.nexe/* -type f \
+RUN export NODE_VERSION=$(node --version | sed 's/^v//'); \
+  find /root/.nexe \
+    -type d \
+    -not -path /root/.nexe \
+    -not -path /root/.nexe/${NODE_VERSION} \
+    -maxdepth 1 \
+    -exec rm -rf {} +; \
+  find /root/.nexe/${NODE_VERSION} \
+    -type f \
     -not -name 'node' \
     -not -name '_third_party_main.js' \
     -not -name 'configure.py' -delete
@@ -51,8 +61,9 @@ RUN find /root/.nexe/* -type f \
 # --best: 14.8M
 # brute or ultra-brute stops it from working
 # upx -t to test binary
-RUN \
-  if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
+# Also upx the libstdc++ lib
+RUN if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
     upx --best /root/.nexe/*/out/Release/node; \
   fi && \
-  upx -t /root/.nexe/*/out/Release/node
+  upx -t /root/.nexe/*/out/Release/node && \
+  upx /usr/lib/libstdc++.so.*.*
