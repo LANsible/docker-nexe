@@ -61,9 +61,7 @@ RUN export NODE_VERSION=$(node --version | sed 's/^v//'); \
 # --best: 14.8M
 # brute or ultra-brute stops it from working
 # upx -t to test binary
-# Also upx the libstdc++ lib
 RUN if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
     upx --best /root/.nexe/*/out/Release/node; \
   fi && \
-  upx -t /root/.nexe/*/out/Release/node && \
-  upx /usr/lib/libstdc++.so.*.*
+  upx -t /root/.nexe/*/out/Release/node
