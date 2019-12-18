@@ -2,6 +2,9 @@
 services:
   - docker:19.03-dind
 
+variables:
+  DOCKER_IMAGE_NAME: lansible/nexe
+
 include:
   - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-login.yml
   - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-build.yml
@@ -10,15 +13,3 @@ stages:
   - build
   - test
   - publish
-
-publish_branch:
-  variables:
-    DOCKER_IMAGE_NAME: lansible/nexe
-
-publish_tag:
-  variables:
-    DOCKER_IMAGE_NAME: lansible/nexe
-
-publish_latest:
-  variables:
-    DOCKER_IMAGE_NAME: lansible/nexe
