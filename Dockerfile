@@ -1,15 +1,18 @@
-FROM alpine:3.10
+FROM alpine:edge
 
 ENV VERSION=4.0.0-beta.3
+# Needed for node-gyp otherwise looking for Python2
+ENV PYTHON=/usr/bin/python3
 
 # Added busybox-static for easy usage in scratch images
 # See https://github.com/nodejs/node/blob/master/BUILDING.md#building-nodejs-on-supported-platforms
 RUN apk --no-cache add \
+  git \
   busybox-static \
-  g++ \
-  make \
+  build-base \
   python3 \
   linux-headers \
+  nodejs \
   npm \
   upx
 
@@ -22,7 +25,7 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   npm install --unsafe-perm --global nexe@${VERSION}
 
 # Create dummy app
-RUN echo "console.log('hello world')" >> index.js
+RUN echo "console.log('hello world')" > index.js
 
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
@@ -36,8 +39,18 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   nexe --target alpine --build --empty --no-mangle --verbose --configure="--partly-static" --output test && \
   rm -f test
 
+# Get node version to package only the current installed version (copy earlier might have been an old version)
+# Remove any other version then the current node version
 # Remove all files except the ones needed for nexe build
-RUN find /root/.nexe/* -type f \
+RUN export NODE_VERSION=$(node --version | sed 's/^v//'); \
+  find /root/.nexe \
+    -type d \
+    -not -path /root/.nexe \
+    -not -path /root/.nexe/${NODE_VERSION} \
+    -maxdepth 1 \
+    -exec rm -rf {} +; \
+  find /root/.nexe/${NODE_VERSION} \
+    -type f \
     -not -name 'node' \
     -not -name '_third_party_main.js' \
     -not -name 'configure.py' -delete
@@ -48,8 +61,7 @@ RUN find /root/.nexe/* -type f \
 # --best: 14.8M
 # brute or ultra-brute stops it from working
 # upx -t to test binary
-RUN \
-  if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
+RUN if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
     upx --best /root/.nexe/*/out/Release/node; \
   fi && \
   upx -t /root/.nexe/*/out/Release/node
