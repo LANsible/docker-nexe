@@ -20,9 +20,19 @@ RUN apk --no-cache add \
 COPY --from=lansible/nexe:latest /root/.nexe /root/.nexe
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
+# Install specified nexe version
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
   npm install --unsafe-perm --global nexe@${VERSION}
+
+# Update internal node-gyp
+# https://github.com/nodejs/node-gyp/wiki/Updating-npm%27s-bundled-node-gyp
+# Needs npm explore needs bash
+RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
+  export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
+  apk add --no-cache bash && \
+  npm explore npm --global -- npm install node-gyp@latest && \
+  apk del bash
 
 # Create dummy app
 RUN echo "console.log('hello world')" > index.js
