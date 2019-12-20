@@ -14,5 +14,5 @@ include:
 stages:
   - build
   - test
-  - publish
+  - push
   - manifest
