@@ -46,7 +46,7 @@ RUN echo "console.log('hello world')" > index.js
 # https://github.com/nodejs/node/blob/master/configure.py#L131
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  nexe --target alpine --build --empty --no-mangle --verbose --configure="--partly-static" --output test && \
+  nexe --target alpine --build --empty --verbose --configure="--partly-static" --output test && \
   rm -f test
 
 # Get node version to package only the current installed version (copy earlier might have been an old version)
