@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM alpine:3.11
 
 ENV VERSION=4.0.0-beta.3
 # Needed for node-gyp otherwise looking for Python2
@@ -46,7 +46,7 @@ RUN echo "console.log('hello world')" > index.js
 # https://github.com/nodejs/node/blob/master/configure.py#L131
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  nexe --target alpine --build --empty --no-mangle --verbose --configure="--partly-static" --output test && \
+  nexe --target alpine --build --empty --verbose --configure="--partly-static" --output test && \
   rm -f test
 
 # Get node version to package only the current installed version (copy earlier might have been an old version)
@@ -67,8 +67,8 @@ RUN export NODE_VERSION=$(node --version | sed 's/^v//'); \
 
 # Only run upx when not yet packaged
 # grep on stderr and stdout, therefore the redirect
-# no upx: 43.1M
-# --best: 14.8M
+# no upx: 54.6M
+# --best: 18.6M
 # brute or ultra-brute stops it from working
 # upx -t to test binary
 RUN if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
