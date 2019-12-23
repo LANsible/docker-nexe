@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM alpine:3.11
 
 ENV VERSION=4.0.0-beta.3
 # Needed for node-gyp otherwise looking for Python2
@@ -67,8 +67,8 @@ RUN export NODE_VERSION=$(node --version | sed 's/^v//'); \
 
 # Only run upx when not yet packaged
 # grep on stderr and stdout, therefore the redirect
-# no upx: 43.1M
-# --best: 14.8M
+# no upx: 54.6M
+# --best: 18.6M
 # brute or ultra-brute stops it from working
 # upx -t to test binary
 RUN if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
