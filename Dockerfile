@@ -1,5 +1,5 @@
 ARG ARCHITECTURE
-FROM multiarch/alpine:${ARCHITECTURE}-v3.10
+FROM multiarch/alpine:${ARCHITECTURE}-edge
 
 ENV VERSION=4.0.0-beta.3
 # Needed for node-gyp otherwise looking for Python2
@@ -21,9 +21,11 @@ RUN apk --no-cache add \
 COPY --from=lansible/nexe:latest /root/.nexe /root/.nexe
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
+# npn set unsafe-perm is needed for: https://github.com/npm/uid-number/issues/3#issuecomment-287413039
 # Install specified nexe version
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
+  npm config set unsafe-perm true && \
   npm install --unsafe-perm --global nexe@${VERSION}
 
 # Update internal node-gyp
