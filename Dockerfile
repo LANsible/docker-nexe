@@ -17,9 +17,6 @@ RUN apk --no-cache add \
   npm \
   upx
 
-# Copy latest into this image to speedup build
-COPY --from=lansible/nexe:latest /root/.nexe /root/.nexe
-
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # npn set unsafe-perm is needed for: https://github.com/npm/uid-number/issues/3#issuecomment-287413039
 # Install specified nexe version
