@@ -1,5 +1,5 @@
 ARG ARCHITECTURE
-FROM multiarch/alpine:${ARCHITECTURE}-edge
+FROM multiarch/alpine:${ARCHITECTURE}-v3.11
 
 ENV VERSION=4.0.0-beta.3
 # Needed for node-gyp otherwise looking for Python2
