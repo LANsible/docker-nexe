@@ -1,7 +1,4 @@
 ---
-services:
-  - docker:19.03-dind
-
 variables:
   DOCKER_IMAGE_NAME: lansible/nexe
 
@@ -12,6 +9,7 @@ include:
   - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/sast-cis-benchmark.yml
 
 stages:
+  - lint
   - build
   - test
   - push
