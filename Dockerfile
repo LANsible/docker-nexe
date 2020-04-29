@@ -1,7 +1,7 @@
 ARG ARCHITECTURE
 FROM multiarch/alpine:${ARCHITECTURE}-v3.11
 
-ENV VERSION=4.0.0-beta.4
+ENV VERSION=v4.0.0-beta.6
 # Needed for node-gyp otherwise looking for Python2
 ENV PYTHON=/usr/bin/python3
 
