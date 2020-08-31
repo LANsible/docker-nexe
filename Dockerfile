@@ -14,8 +14,10 @@ RUN apk --no-cache add \
   python3 \
   linux-headers \
   nodejs \
-  npm \
-  upx
+  npm
+
+# 'Install' upx from image since upx isn't available for aarch64 from Alpine
+COPY --from=lansible/upx /usr/bin/upx /usr/bin/upx
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # npn set unsafe-perm is needed for: https://github.com/npm/uid-number/issues/3#issuecomment-287413039
