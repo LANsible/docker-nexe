@@ -13,7 +13,7 @@ RUN apk --no-cache add \
   build-base \
   python3 \
   linux-headers \
-  nodejs \
+  nodejs-current \
   npm
 
 # 'Install' upx from image since upx isn't available for aarch64 from Alpine
