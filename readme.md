@@ -1,19 +1,10 @@
 # docker-nexe
+[![Build Status](https://cloud.drone.io/api/badges/LANsible/docker-nexe/status.svg)](https://cloud.drone.io/LANsible/docker-nexe)
+[![Docker Pulls](https://img.shields.io/docker/pulls/lansible/nexe.svg)](https://hub.docker.com/r/lansible/nexe)
+[![Docker Version](https://images.microbadger.com/badges/version/lansible/nexe:latest.svg)](https://microbadger.com/images/lansible/nexe:latest)
+[![Docker Size/Layers](https://images.microbadger.com/badges/image/lansible/nexe:latest.svg)](https://microbadger.com/images/lansible/nexe:latest)
 
-Compile Node just once instead of each build. Use it like:
+Compile Node just once instead of each build. See these examples how to use:
 
-```Dockerfile
-COPY --from=lansible/nexe-cache:latest /root/.nexe/ /root/.nexe/
-RUN nexe \
-    --build \
-    --output zigbee2mqtt
-```
-
-With expiremental enabled:
-
-```Dockerfile
-RUN --mount=type=cache,from=lansible/nexe-cache:latest,source=/root/.nexe/,target=/root/.nexe/ \
-  nexe \
-    --build \
-    --output zigbee2mqtt
-```
+* https://github.com/LANsible/docker-zigbee2mqtt/blob/master/Dockerfile
+* https://github.com/LANsible/docker-zwave2mqtt/blob/master/Dockerfile
