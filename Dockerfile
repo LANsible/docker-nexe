@@ -1,7 +1,7 @@
 ARG ARCHITECTURE
-FROM multiarch/alpine:${ARCHITECTURE}-edge
+FROM multiarch/alpine:${ARCHITECTURE}-v3.13
 
-ENV VERSION=v4.0.0-beta.16
+ENV VERSION=v4.0.0-beta.17
 # Needed for node-gyp otherwise looking for Python2
 ENV PYTHON=/usr/bin/python3
 
@@ -16,9 +16,6 @@ RUN apk --no-cache add \
   nodejs \
   npm
 
-# 'Install' upx from image since upx isn't available for aarch64 from Alpine
-COPY --from=lansible/upx /usr/bin/upx /usr/bin/upx
-
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # npn set unsafe-perm is needed for: https://github.com/npm/uid-number/issues/3#issuecomment-287413039
 # Install specified nexe version
@@ -26,7 +23,6 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
   npm config set unsafe-perm true && \
   npm install --unsafe-perm --global nexe@${VERSION}
-  # npm install --unsafe-perm --global git+https://github.com/nexe/nexe.git
 
 # Update internal node-gyp
 # https://github.com/nodejs/node-gyp/wiki/Updating-npm%27s-bundled-node-gyp
@@ -68,6 +64,8 @@ RUN export NODE_VERSION=$(node --version | sed 's/^v//'); \
     -not -name '_third_party_main.js' \
     -not -name 'configure.py' -delete
 
+# 'Install' upx from image since upx isn't available for aarch64 from Alpine
+COPY --from=lansible/upx /usr/bin/upx /usr/bin/upx
 # Only run upx when not yet packaged
 # grep on stderr and stdout, therefore the redirect
 # no upx: 54.6M
