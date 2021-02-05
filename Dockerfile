@@ -76,3 +76,8 @@ RUN if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'
     upx --best /root/.nexe/*/out/Release/node; \
   fi && \
   upx -t /root/.nexe/*/out/Release/node
+
+# Workaround of https://github.com/nexe/resolve-dependencies/issues/10
+COPY resolve.patch resolve.patch
+RUN patch /usr/lib/node_modules/nexe/node_modules/resolve-dependencies/lib/node-loader.js resolve.patch \
+  && rm resolve.patch
