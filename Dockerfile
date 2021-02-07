@@ -24,15 +24,6 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   npm config set unsafe-perm true && \
   npm install --unsafe-perm --global nexe@${VERSION}
 
-# Update internal node-gyp
-# https://github.com/nodejs/node-gyp/wiki/Updating-npm%27s-bundled-node-gyp
-# Needs npm explore needs bash
-RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
-  export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  apk add --no-cache bash && \
-  npm explore npm --global -- npm install node-gyp@latest && \
-  apk del bash
-
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
 # https://github.com/nexe/nexe/issues/610#issuecomment-483336855
