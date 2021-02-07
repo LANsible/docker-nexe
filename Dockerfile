@@ -33,9 +33,6 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   npm explore npm --global -- npm install node-gyp@latest && \
   apk del bash
 
-# Create dummy app
-RUN echo "console.log('hello world')" > index.js
-
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
 # https://github.com/nexe/nexe/issues/610#issuecomment-483336855
@@ -45,8 +42,9 @@ RUN echo "console.log('hello world')" > index.js
 # https://github.com/nodejs/node/blob/master/configure.py#L131
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  nexe --target alpine --build --empty --verbose --configure="--partly-static" --output test && \
-  rm -f test
+  echo "console.log('hello world')" > index.js && \
+  nexe --build --empty --verbose --configure="--partly-static" --output test && \
+  rm -f test index.js
 
 # Get node version to package only the current installed version (copy earlier might have been an old version)
 # Remove any other version then the current node version
