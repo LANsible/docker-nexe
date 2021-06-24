@@ -19,7 +19,7 @@ RUN apk --no-cache add \
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
   npm config set unsafe-perm true && \
-  npm ci --unsafe-perm --global nexe@${VERSION}
+  npm install --unsafe-perm --global nexe@${VERSION}
 
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
