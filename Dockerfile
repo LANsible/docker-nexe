@@ -1,15 +1,12 @@
-ARG ARCHITECTURE
-FROM multiarch/alpine:${ARCHITECTURE}-v3.13
+FROM alpine:3.14
 
 ENV VERSION=v4.0.0-beta.18
 # Needed for node-gyp otherwise looking for Python2
 ENV PYTHON=/usr/bin/python3
 
-# Added busybox-static for easy usage in scratch images
 # See https://github.com/nodejs/node/blob/master/BUILDING.md#building-nodejs-on-supported-platforms
 RUN apk --no-cache add \
   git \
-  busybox-static \
   build-base \
   python3 \
   linux-headers \
@@ -22,7 +19,7 @@ RUN apk --no-cache add \
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
   npm config set unsafe-perm true && \
-  npm install --unsafe-perm --global nexe@${VERSION}
+  npm ci --unsafe-perm --global nexe@${VERSION}
 
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
