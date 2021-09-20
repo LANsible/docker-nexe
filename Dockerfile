@@ -21,6 +21,9 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   npm config set unsafe-perm true && \
   npm install --unsafe-perm --global nexe@${VERSION}
 
+# Copy compiled NodeJS of previous version, if the version is same the next build is skipped
+COPY --from=lansible/nexe:latest /root/.nexe /root/.nexe
+
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
 # https://github.com/nexe/nexe/issues/610#issuecomment-483336855
