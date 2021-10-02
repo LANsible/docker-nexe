@@ -1,6 +1,6 @@
 FROM alpine:3.14
 
-ENV VERSION=v4.0.0-beta.18
+ENV VERSION=v4.0.0-beta.19
 # Needed for node-gyp otherwise looking for Python2
 ENV PYTHON=/usr/bin/python3
 
@@ -18,7 +18,6 @@ RUN apk --no-cache add \
 # Install specified nexe version
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
-  npm config set unsafe-perm true && \
   npm install --unsafe-perm --global nexe@${VERSION}
 
 # Copy compiled NodeJS of previous version, if the version is same the next build is skipped
