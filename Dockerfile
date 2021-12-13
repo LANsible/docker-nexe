@@ -1,4 +1,4 @@
-FROM alpine:3.14
+FROM alpine:3.15
 
 ENV VERSION=v4.0.0-beta.19
 # Needed for node-gyp otherwise looking for Python2
