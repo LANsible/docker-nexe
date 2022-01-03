@@ -13,11 +13,16 @@ RUN apk --no-cache add \
   nodejs \
   npm
 
+# Setup mold for faster compile
+COPY --from=lansible/mold:1.1 /usr/local/bin/mold /usr/local/bin/mold
+COPY --from=lansible/mold:1.1 /usr/local/libexec/mold /usr/local/libexec/mold
+
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # npn set unsafe-perm is needed for: https://github.com/npm/uid-number/issues/3#issuecomment-287413039
 # Install specified nexe version
+# TODO update -B/usr/local/libexec/mold to -fuse-ld=mold when GCC > 12.1.0
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
-  export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
+  export MAKEFLAGS="-j$((CORES+1)) -l${CORES} CFLAGS=-B/usr/local/libexec/mold"; \
   npm install --unsafe-perm --global nexe@${VERSION}
 
 # Copy compiled NodeJS of previous version, if the version is same the next build is skipped
@@ -30,13 +35,14 @@ COPY --from=lansible/nexe:latest /root/.nexe /root/.nexe
 # --fully-static: build static node binary (will not work for serialport)
 # --partly-static: keep support for dynamic linking
 # https://github.com/nodejs/node/blob/master/configure.py#L131
+# TODO update -B/usr/local/libexec/mold to -fuse-ld=mold when GCC > 12.1.0
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
-  export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
+  export MAKEFLAGS="-j$((CORES+1)) -l${CORES} CFLAGS=-B/usr/local/libexec/mold"; \
   echo "console.log('hello world')" > index.js && \
   nexe --build --empty --verbose --configure="--partly-static" --output test && \
   rm -f test index.js
 
-# Get node version to package only the current installed version (copy earlier might have been an old version)
+# Get node version to keep only the current installed version (copy earlier might have been an old version)
 # Remove any other version then the current node version
 # Remove all files except the ones needed for nexe build
 RUN export NODE_VERSION=$(node --version | sed 's/^v//'); \

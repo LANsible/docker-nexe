@@ -1,6 +1,7 @@
 ---
 variables:
   DOCKER_IMAGE_NAME: lansible/nexe
+  DOCKER_TEST_COMMAND: nexe --help
 
 include:
   - template: Container-Scanning.gitlab-ci.yml
@@ -8,14 +9,8 @@ include:
   - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-build.yml
   - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/sast-cis-benchmark.yml
 
-test:
-  stage: test
-  tags:
-    - docker
-  variables:
-    DOCKER_IMAGE_NAME: ${CI_REGISTRY_IMAGE}
-    DOCKER_IMAGE_TAG: ${CI_COMMIT_SHA}
-  script:
-    - docker run ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}-amd64
-  except:
-    - tags
+test_amd64:
+  extends: .test
+
+test_arm64:
+  extends: .test
