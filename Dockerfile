@@ -14,8 +14,8 @@ RUN apk --no-cache add \
   npm
 
 # Setup mold for faster compile
-COPY --from=lansible/mold:1.3.0 /usr/local/bin/mold /usr/local/bin/mold
-COPY --from=lansible/mold:1.3.0 /usr/local/libexec/mold /usr/local/libexec/mold
+COPY --from=lansible/mold:1.3.1 /usr/local/bin/mold /usr/local/bin/mold
+COPY --from=lansible/mold:1.3.1 /usr/local/libexec/mold /usr/local/libexec/mold
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # npn set unsafe-perm is needed for: https://github.com/npm/uid-number/issues/3#issuecomment-287413039
