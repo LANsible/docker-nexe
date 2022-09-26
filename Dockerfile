@@ -1,4 +1,5 @@
 FROM alpine:3.16
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ENV VERSION=v4.0.0-rc.1
 # Needed for node-gyp otherwise looking for Python2
@@ -10,20 +11,19 @@ RUN apk --no-cache add \
   build-base \
   python3 \
   linux-headers \
-  nodejs \
-  npm
+  nodejs-current
 
 # Setup mold for faster compile
 COPY --from=lansible/mold:1.4.2 /usr/local/bin/mold /usr/local/bin/mold
 COPY --from=lansible/mold:1.4.2 /usr/local/libexec/mold /usr/local/libexec/mold
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
-# npn set unsafe-perm is needed for: https://github.com/npm/uid-number/issues/3#issuecomment-287413039
 # Install specified nexe version
 # TODO update -B/usr/local/libexec/mold to -fuse-ld=mold when GCC > 12.1.0
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES} CFLAGS=-B/usr/local/libexec/mold"; \
-  npm install --unsafe-perm --global nexe@${VERSION}
+  corepack enable && \
+  yarn global add --prefix /usr/local nexe@${VERSION}
 
 # Copy compiled NodeJS of previous version, if the version is same the next build is skipped
 COPY --from=lansible/nexe:latest /root/.nexe /root/.nexe
