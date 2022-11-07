@@ -71,7 +71,7 @@ COPY --from=upx /usr/bin/upx /usr/bin/upx
 # --best: 18.6M
 # brute or ultra-brute stops it from working
 # upx -t to test binary
-RUN if upx -t /root/.nexe/*/out/Release/node 2>&1 | grep -q 'NotPackedException'; then \
+RUN if (upx -t /root/.nexe/*/out/Release/node 2>&1 || true) | grep -q 'NotPackedException'; then \
     upx --best /root/.nexe/*/out/Release/node; \
   fi && \
   upx -t /root/.nexe/*/out/Release/node
