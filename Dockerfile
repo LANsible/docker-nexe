@@ -1,6 +1,11 @@
+FROM lansible/mold:1.6.0 as mold
+FROM lansible/nexe:latest as nexe
+FROM lansible/upx:latest as upx
+
 FROM alpine:3.16
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
+# https://www.npmjs.com/package/nexe
 ENV VERSION=v4.0.0-rc.1
 # Needed for node-gyp otherwise looking for Python2
 ENV PYTHON=/usr/bin/python3
@@ -14,8 +19,8 @@ RUN apk --no-cache add \
   nodejs-current
 
 # Setup mold for faster compile
-COPY --from=lansible/mold:1.4.2 /usr/local/bin/mold /usr/local/bin/mold
-COPY --from=lansible/mold:1.4.2 /usr/local/libexec/mold /usr/local/libexec/mold
+COPY --from=mold /usr/local/bin/mold /usr/local/bin/mold
+COPY --from=mold /usr/local/libexec/mold /usr/local/libexec/mold
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # Install specified nexe version
@@ -26,7 +31,7 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   yarn global add --prefix /usr/local nexe@${VERSION}
 
 # Copy compiled NodeJS of previous version, if the version is same the next build is skipped
-COPY --from=lansible/nexe:latest /root/.nexe /root/.nexe
+COPY --from=nexe /root/.nexe /root/.nexe
 
 # NOTE(wilmardo): For the upx steps and why --empty see:
 # https://github.com/nexe/nexe/issues/366
@@ -59,7 +64,7 @@ RUN export NODE_VERSION=$(node --version | sed 's/^v//'); \
     -not -name 'configure.py' -delete
 
 # 'Install' upx from image since upx isn't available for aarch64 from Alpine
-COPY --from=lansible/upx /usr/bin/upx /usr/bin/upx
+COPY --from=upx /usr/bin/upx /usr/bin/upx
 # Only run upx when not yet packaged
 # grep on stderr and stdout, therefore the redirect
 # no upx: 54.6M
