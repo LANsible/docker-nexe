@@ -1,8 +1,8 @@
 # docker-nexe
-[![pipeline status](https://gitlab.com/lansible1/docker-nexe/badges/master/pipeline.svg)](https://gitlab.com/lansible1/docker-nexe/-/commits/master)
+[![Build Status](https://github.com/LANsible/docker-nexe/actions/workflows/docker.yml/badge.svg)](https://github.com/LANsible/docker-nexe/actions/workflows/docker.yml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lansible/nexe.svg)](https://hub.docker.com/r/lansible/nexe)
-[![Docker Version](https://images.microbadger.com/badges/version/lansible/nexe:latest.svg)](https://microbadger.com/images/lansible/nexe:latest)
-[![Docker Size/Layers](https://images.microbadger.com/badges/image/lansible/nexe:latest.svg)](https://microbadger.com/images/lansible/nexe:latest)
+[![Docker Version](https://img.shields.io/docker/v/lansible/nexe.svg?sort=semver)](https://hub.docker.com/r/lansible/nexe)
+[![Docker Size/Layers](https://img.shields.io/docker/image-size/lansible/nexe.svg?sort=semver)](https://hub.docker.com/r/lansible/nexe)
 
 Compile Node just once instead of each build. See these examples how to use:
 
