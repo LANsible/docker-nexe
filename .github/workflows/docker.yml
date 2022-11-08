@@ -6,6 +6,7 @@ on:
 jobs:
   docker:
     uses: LANsible/github-workflows/.github/workflows/docker-build.yml@main
+    timeout-minutes: 1440  # 24h
     with:
       image_name: lansible/nexe
     secrets: inherit
