@@ -1,12 +1,12 @@
-FROM lansible/mold:1.6.0 as mold
+FROM lansible/mold:1.10.1 as mold
 FROM lansible/nexe:latest as nexe
-FROM lansible/upx:latest as upx
+FROM lansible/upx:4.0.1 as upx
 
-FROM alpine:3.16
+FROM alpine:3.17
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 # https://www.npmjs.com/package/nexe
-ENV VERSION=v4.0.0-rc.1
+ENV VERSION=v4.0.0-rc.2
 # Needed for node-gyp otherwise looking for Python2
 ENV PYTHON=/usr/bin/python3
 
@@ -20,7 +20,6 @@ RUN apk --no-cache add \
 
 # Setup mold for faster compile
 COPY --from=mold /usr/local/bin/mold /usr/local/bin/mold
-COPY --from=mold /usr/local/libexec/mold /usr/local/libexec/mold
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # Install specified nexe version
@@ -40,9 +39,8 @@ COPY --from=nexe /root/.nexe /root/.nexe
 # --fully-static: build static node binary (will not work for serialport)
 # --partly-static: keep support for dynamic linking
 # https://github.com/nodejs/node/blob/master/configure.py#L131
-# TODO update -B/usr/local/libexec/mold to -fuse-ld=mold when GCC > 12.1.0
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
-  export MAKEFLAGS="-j$((CORES+1)) -l${CORES} CFLAGS=-B/usr/local/libexec/mold"; \
+  export MAKEFLAGS="-j$((CORES+1)) -l${CORES} CFLAGS=-Bmold"; \
   echo "console.log('hello world')" > index.js && \
   nexe --build --empty --verbose --configure="--partly-static" --output test && \
   rm -f test index.js
