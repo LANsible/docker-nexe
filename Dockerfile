@@ -16,7 +16,8 @@ RUN apk --no-cache add \
   build-base \
   python3 \
   linux-headers \
-  nodejs-current
+  nodejs-current \
+  npm
 
 # Setup mold for faster compile
 COPY --from=mold /usr/local/bin/mold /usr/local/bin/mold
