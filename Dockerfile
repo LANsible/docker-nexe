@@ -1,8 +1,8 @@
-FROM lansible/mold:1.10.1 as mold
+FROM lansible/mold:latest as mold
 FROM lansible/nexe:latest as nexe
-FROM lansible/upx:4.0.1 as upx
+FROM lansible/upx:latest as upx
 
-FROM alpine:3.17
+FROM alpine:3.18
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 # https://www.npmjs.com/package/nexe
@@ -24,9 +24,8 @@ COPY --from=mold /usr/local/bin/mold /usr/local/bin/mold
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # Install specified nexe version
-# TODO update -B/usr/local/libexec/mold to -fuse-ld=mold when GCC > 12.1.0
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
-  export MAKEFLAGS="-j$((CORES+1)) -l${CORES} CFLAGS=-B/usr/local/libexec/mold"; \
+  export MAKEFLAGS="-j$((CORES+1)) -l${CORES} CFLAGS=-fuse-ld=mold"; \
   corepack enable && \
   yarn global add --prefix /usr/local nexe@${VERSION}
 
