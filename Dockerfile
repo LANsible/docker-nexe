@@ -52,6 +52,8 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
 # --best: 18.6M
 # brute or ultra-brute stops it from working
 # upx -t to test binary
+# TODO: remove TARGETPLATFORM and if when amd64 is working again
+ARG TARGETPLATFORM
 RUN NODE_VERSION=$(node --version | sed 's/^v//'); \
   find /root/.nexe \
     -type d \
@@ -65,7 +67,9 @@ RUN NODE_VERSION=$(node --version | sed 's/^v//'); \
     -not -name '_third_party_main.js' \
     -not -name 'configure.py' -delete; \
   \
-  if (upx -t /root/.nexe/*/out/Release/node 2>&1 || true) | grep -q 'NotPackedException'; then \
-    upx --best /root/.nexe/*/out/Release/node; \
-  fi && \
-  upx -t /root/.nexe/*/out/Release/node
+  if [ "$TARGETPLATFORM" != "linux/amd64" ]; then \
+    if (upx -t /root/.nexe/*/out/Release/node 2>&1 || true) | grep -q 'NotPackedException'; then \
+      upx --best /root/.nexe/*/out/Release/node; \
+      upx -t /root/.nexe/*/out/Release/node; \
+    fi \
+  fi
