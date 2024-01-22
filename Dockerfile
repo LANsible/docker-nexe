@@ -8,14 +8,15 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV VERSION=v4.0.0-rc.2
 
 # See https://github.com/nodejs/node/blob/master/BUILDING.md#building-nodejs-on-supported-platforms
-# git and upx for downstream image ease of use
+# git, upx and gcompat(hugo) for downstream image ease of use
 RUN apk --no-cache add \
   build-base \
   python3 \
   linux-headers \
   mold \
   upx \
-  git
+  git \
+  gcompat
 
 # Makeflags source: https://math-linux.com/linux/tip-of-the-day/article/speedup-gnu-make-build-and-compilation-process
 # Install specified nexe version
