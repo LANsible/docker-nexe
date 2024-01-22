@@ -5,7 +5,7 @@ FROM node:20.10-alpine3.19
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 # https://www.npmjs.com/package/nexe
-ENV VERSION=v4.0.0-rc.2
+ENV VERSION=v4.0.0-rc.4
 
 # See https://github.com/nodejs/node/blob/master/BUILDING.md#building-nodejs-on-supported-platforms
 # git, upx and gcompat(hugo) for downstream image ease of use
